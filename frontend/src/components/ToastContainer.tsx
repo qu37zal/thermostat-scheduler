@@ -54,6 +54,9 @@ const ToastContainer: React.FC = () => {
         right: '20px',
         zIndex: 9999,
         pointerEvents: 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
       }}
     >
       {toasts.map(toast => (
@@ -64,10 +67,11 @@ const ToastContainer: React.FC = () => {
             color: 'white',
             padding: '12px 16px',
             borderRadius: '6px',
-            marginBottom: '10px',
             minWidth: '300px',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            animation: 'slideInRight 0.3s ease-out',
+            animation: `fadeIn 0.2s ease-out, fadeOut 0.4s ease-in ${
+              toast.type === 'error' ? '3.6s' : '2.8s'
+            }`,
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
@@ -83,14 +87,20 @@ const ToastContainer: React.FC = () => {
         </div>
       ))}
       <style>{`
-        @keyframes slideInRight {
+        @keyframes fadeIn {
           from {
-            transform: translateX(400px);
             opacity: 0;
           }
           to {
-            transform: translateX(0);
             opacity: 1;
+          }
+        }
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
           }
         }
       `}</style>

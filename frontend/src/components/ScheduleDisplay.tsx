@@ -27,7 +27,7 @@ const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ ipAddress, mode, refr
       try {
         setLoading(true);
         setError(null);
-        const toastId = info('Loading schedule...');
+        const toastId = info('Refreshing schedule...');
         setLoadingToastId(toastId);
 
         // The thermostat API returns all 7 days in one response

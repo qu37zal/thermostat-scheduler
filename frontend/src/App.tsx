@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const fetchThermostats = async () => {
     try {
       // Show loading toast - longer duration and manual dismiss
-      const toastId = info('Loading thermostats...');
+      const toastId = info('Refreshing thermostats...');
       setLoadingToastId(toastId);
       setLoading(true);
       const response = await fetch('/api/thermostats');

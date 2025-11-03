@@ -127,22 +127,6 @@ const ThermostatSelector: React.FC<ThermostatSelectorProps> = ({
             {thermostat.name || `Thermostat ${thermostat.id}`}
           </button>
         ))}
-        <button
-          onClick={handleRefresh}
-          disabled={loading}
-          style={{
-            marginLeft: 'auto',
-            padding: '0.75rem 1rem',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1,
-          }}
-        >
-          {loading ? 'Refreshing...' : '🔄 Refresh All'}
-        </button>
       </div>
 
       {/* Tab Content */}

@@ -25,7 +25,7 @@ const ScheduleDisplayCombined: React.FC<ScheduleDisplayCombinedProps> = ({ ipAdd
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const toastId = info('Loading schedules...');
+        const toastId = info('Refreshing schedules...');
         setLoadingToastId(toastId);
         setLoading(true);
         setError(null);

@@ -32,7 +32,7 @@ const HistoryVisualization: React.FC<HistoryVisualizationProps> = ({
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const toastId = info('Loading history...');
+        const toastId = info('Refreshing history...');
         setLoadingToastId(toastId);
         setLoading(true);
         setError(null);

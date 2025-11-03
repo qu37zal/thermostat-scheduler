@@ -53,7 +53,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = ({
   useEffect(() => {
     const loadSchedule = async () => {
       try {
-        const toastId = info('Loading schedule...');
+        const toastId = info('Refreshing schedule...');
         setLoadingToastId(toastId);
         setLoading(true);
         setError(null);
