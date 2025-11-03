@@ -1,6 +1,14 @@
 {
   "name": "smart-thermostat-scheduler-backend",
   "version": "1.0.0",
+  "description": "Backend API server for smart thermostat scheduling. Provides REST endpoints for thermostat control, schedule management, and history tracking. Compatible with RTCOA (Radio Thermostat Company of America) WiFi-enabled thermostats such as CT50.",
+  "author": "Jeremy Rodgers <qu37zal@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qu37zal/thermostat-scheduler.git",
+    "directory": "backend"
+  },
   "main": "src/app.ts",
   "scripts": {
     "start": "ts-node src/app.ts",
@@ -11,6 +19,14 @@
     "test:coverage": "jest --coverage",
     "release": "npm run test && npm run build"
   },
+  "keywords": [
+    "thermostat",
+    "api",
+    "express",
+    "typescript",
+    "scheduler",
+    "backend"
+  ],
   "dependencies": {
     "axios": "^1.6.0",
     "express": "^4.17.1",

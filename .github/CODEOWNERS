@@ -1,0 +1,21 @@
+# Code Owners for Smart Thermostat Scheduler
+# This file designates code ownership and automatic reviewer assignment
+
+# Default owner for the entire repository
+* @qu37zal
+
+# Backend code
+/backend/ @qu37zal
+/backend/src/ @qu37zal
+
+# Frontend code
+/frontend/ @qu37zal
+/frontend/src/ @qu37zal
+
+# Documentation
+/documentation/ @qu37zal
+*.md @qu37zal
+
+# Configuration files
+docker-compose.yml @qu37zal
+.github/ @qu37zal

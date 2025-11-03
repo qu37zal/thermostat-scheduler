@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Production
+dist/
+build/
+.next/
+
+# Misc
+.DS_Store
+*.pem
+.git/
+.cache/
+
+# Logs
+*.log
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Coverage
+coverage/
+.nyc_output/

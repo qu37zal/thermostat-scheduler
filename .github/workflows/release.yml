@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get version from tag
+        id: tag_name
+        run: |
+          echo "SOURCE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Build backend
+        run: |
+          cd backend
+          npm ci
+          npm run build --if-present
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Create Release Assets
+        run: |
+          cd frontend/build
+          tar -czf ../../frontend-build.tar.gz .
+          cd ../..
+          mkdir -p release-artifacts
+          cp frontend-build.tar.gz release-artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release-artifacts/*
+          body: |
+            Release of ${{ steps.tag_name.outputs.SOURCE_TAG }}
+            
+            Please check the [CHANGELOG.md](CHANGELOG.md) for details about this release.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

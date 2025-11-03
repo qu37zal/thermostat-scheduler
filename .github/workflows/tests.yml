@@ -1,0 +1,75 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies (backend)
+      run: |
+        cd backend
+        npm ci
+
+    - name: Run linter (backend)
+      run: |
+        cd backend
+        npm run lint --if-present
+
+    - name: Run tests (backend)
+      run: |
+        cd backend
+        npm test
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies (frontend)
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Run linter (frontend)
+      run: |
+        cd frontend
+        npm run lint --if-present
+
+    - name: Run tests (frontend)
+      run: |
+        cd frontend
+        npm test
+
+    - name: Build (frontend)
+      run: |
+        cd frontend
+        npm run build

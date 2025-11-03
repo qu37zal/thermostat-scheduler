@@ -1,4 +1,25 @@
 {
+  "name": "smart-thermostat-scheduler",
+  "version": "1.0.0",
+  "description": "A web application for managing smart thermostat schedules with advanced features including 24-hour scheduling, heat/cool control, and automatic fan circulation. Compatible with RTCOA (Radio Thermostat Company of America) WiFi-enabled thermostats.",
+  "author": "Jeremy Rodgers <qu37zal@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qu37zal/thermostat-scheduler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qu37zal/thermostat-scheduler/issues"
+  },
+  "homepage": "https://github.com/qu37zal/thermostat-scheduler#readme",
+  "keywords": [
+    "thermostat",
+    "scheduler",
+    "smart-home",
+    "hvac",
+    "temperature-control",
+    "automation"
+  ],
   "dependencies": {
     "axios": "^1.10.0"
   }

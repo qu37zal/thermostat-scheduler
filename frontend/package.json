@@ -1,7 +1,23 @@
 {
   "name": "smart-thermostat-scheduler-frontend",
   "version": "1.0.0",
-  "private": true,
+  "description": "React frontend for smart thermostat scheduling. Features include 24-hour schedule editing, real-time temperature tracking, and device management. Compatible with RTCOA (Radio Thermostat Company of America) WiFi-enabled thermostats such as CT50.",
+  "author": "Jeremy Rodgers <qu37zal@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qu37zal/thermostat-scheduler.git",
+    "directory": "frontend"
+  },
+  "private": false,
+  "keywords": [
+    "thermostat",
+    "react",
+    "typescript",
+    "scheduler",
+    "frontend",
+    "ui"
+  ],
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

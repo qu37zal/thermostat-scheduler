@@ -4,6 +4,7 @@ This directory contains all development documentation, API specifications, and p
 
 ## Quick Reference
 
+- **Supported Hardware**: `SUPPORTED_HARDWARE.md` - Thermostat models and hardware requirements
 - **API Specification**: `RTCOAWiFIAPIV1_3.txt` - Official thermostat API documentation
 - **Architecture**: `COMPONENT_ARCHITECTURE.md` - Component design and data flow
 - **Schedule Editing**: `SCHEDULE_EDITOR_GUIDE.md` - How-to guide for schedule features
@@ -12,6 +13,7 @@ This directory contains all development documentation, API specifications, and p
 ## Documentation Files
 
 ### Project Overview
+- **SUPPORTED_HARDWARE.md** - Compatible thermostat models (CT50, CT80, etc.) and hardware requirements
 - **COMPONENT_ARCHITECTURE.md** - System design, component relationships, data flow, and API integration
 
 ### Features & Implementation
