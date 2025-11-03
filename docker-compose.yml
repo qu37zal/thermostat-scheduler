@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    # Use host networking so port 9004 is visible on the host
+    network_mode: host
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/certs:/etc/nginx/certs
+    environment:
+      - BACKEND_HOST=127.0.0.1
+      - BACKEND_PORT=5555
+
+  backend:
+    build:
+      context: ./backend
+    # Use host networking for multicast discovery (SSDP)
+    network_mode: host
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - PORT=5555
+      - DB_PATH=/app/data/thermostat.db

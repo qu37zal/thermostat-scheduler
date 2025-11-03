@@ -1,0 +1,2749 @@
+Radio Thermostat Company of America
+Wi-Fi USNAP Module API
+Version 1.3
+March 22, 2012
+
+March 22, 2012
+Date
+
+Author
+
+Revision
+
+Changelog
+
+23 Mar 2011
+
+Dan Goodman
+
+V1.0
+
+• Initial Release
+
+23 Feb 2012
+
+Dan Goodman
+
+V1.2
+
+• Add it_heat/it_cool
+• Add Remote Temperature
+
+22 Mar 2012
+
+Craig Heffernan
+
+V1.3
+
+• Add program_mode and ttarget thermostat
+attributes
+• Add mode attribute to thermostat pma resource
+• Add the following thermostat resources
+o
+
+Lock mode
+
+o
+
+Simple mode
+
+o
+
+Save energy
+
+o
+
+Temperature swing
+
+o
+
+Night light
+
+o
+
+Temperature differential
+
+o
+
+Stage delay
+
+o
+
+Fan circulation time
+
+o
+
+Humidity
+
+o
+
+Humidity Setpoint
+
+o
+
+Dehumidifier
+
+o
+
+External dehumidifier
+
+o
+
+Time format
+
+o
+
+Air baffle
+
+o
+
+Humidifier
+
+o
+
+HVAC Setttings
+
+LEGAL ADVISORY: Use of the Radio Thermostat Company of America Wi-Fi USNAP Module API (“Local API”) is
+subject to the restrictions set forth in the Terms of Use set forth on the following webpage:
+http://radiothermostat.com/documents/RTCOA%20API%20Terms%20of%20Use%20033011.pdf. Without limiting the
+generality of the foregoing, you may not use the Local API for commercial purposes or modify, copy, distribute, transmit,
+display, perform, reproduce, publish, license, create derivative works from, transfer, or sell the Local API or any
+information, software, products or services related thereto unless expressly permitted in writing by Radio Thermostat
+Company of America. Use of the Local API beyond the scope of authorized access granted pursuant to said Terms of
+Use immediately terminates your right to use the Local API, and may render you liable for damages and injunctive relief
+in a court of law.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+1
+
+March 22, 2012
+
+Table of Contents
+Table of Contents ................................................................................................................................... 2
+1
+
+Introduction ........................................................................................................................... 1
+
+1.1
+
+Resource Model and Data Format ................................................................................................................... 1
+
+1.2
+
+Guidelines for using the API ............................................................................................................................ 2
+
+2
+
+Thermostat API ..................................................................................................................... 4
+
+2.1
+
+Introduction ...................................................................................................................................................... 4
+
+2.2
+
+Thermostat Resource ...................................................................................................................................... 4
+2.2.1
+Thermostat API Version .................................................................................................................... 4
+2.2.2
+Thermostat Resource Data Representation ...................................................................................... 4
+2.2.3
+Thermostat Program Resource ......................................................................................................... 7
+2.2.4
+Thermostat Model.............................................................................................................................. 7
+2.2.5
+Thermostat LED ................................................................................................................................ 7
+2.2.6
+Thermostat Messaging Areas ............................................................................................................ 8
+2.2.7
+Thermostat Remote Temperature ..................................................................................................... 9
+2.2.8
+Thermostat Lock Mode ...................................................................................................................... 9
+2.2.9
+Thermostat Simple Mode .................................................................................................................. 9
+2.2.10 Thermostat Save Energy ................................................................................................................. 10
+2.2.11 Thermostat Temperature Swing ...................................................................................................... 10
+2.2.12 Thermostat Night Light .................................................................................................................... 10
+2.2.13 Thermostat Temperature Differential ............................................................................................... 11
+2.2.14 Thermostat Stage Delay .................................................................................................................. 11
+2.2.15 Thermostat Fan Circulation Time .................................................................................................... 11
+2.2.16 Thermostat Humidity ....................................................................................................................... 11
+2.2.17 Thermostat Humidifier Setpoint ....................................................................................................... 12
+2.2.18 Thermostat Humidifier ..................................................................................................................... 12
+2.2.19 Thermostat Dehumidifier ................................................................................................................. 12
+2.2.20 Thermostat External Dehumidifier ................................................................................................... 12
+2.2.21 Thermostat Time Format ................................................................................................................. 13
+2.2.22 Thermostat Air Baffle ....................................................................................................................... 13
+2.2.23 Thermostat HVAC Settings ............................................................................................................. 14
+
+2.3
+
+System Resource .......................................................................................................................................... 15
+2.3.1
+Basic system information................................................................................................................. 15
+2.3.2
+System Service................................................................................................................................ 15
+2.3.3
+System Name .................................................................................................................................. 16
+2.3.4
+System Command Handler ............................................................................................................. 16
+2.3.5
+System Operating Mode .................................................................................................................. 16
+2.3.6
+Network Configuration ..................................................................................................................... 17
+
+2.4
+
+Deprecated APIs............................................................................................................................................ 17
+
+2.5
+
+Using the API with Curl .................................................................................................................................. 18
+2.5.1
+Get Thermostat State ...................................................................................................................... 18
+2.5.2
+Set target heat temperature to 72 in HEAT mode ........................................................................... 18
+2.5.3
+Set target heat temperature to 74 and enable hold ......................................................................... 18
+2.5.4
+Set target cool temperature to 80 .................................................................................................... 18
+2.5.5
+Set fan mode to ON ......................................................................................................................... 18
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+2
+
+March 22, 2012
+2.5.6
+2.5.7
+2.5.8
+2.5.9
+2.5.10
+2.5.11
+2.5.12
+2.5.13
+2.5.14
+
+Get Heat Program Information for Monday...................................................................................... 18
+Get Heat Program Information for the Whole Week ........................................................................ 18
+Update Cool Program for Tuesday .................................................................................................. 19
+Get the Thermostat Model and Firmware Version ........................................................................... 19
+Get basic system information .......................................................................................................... 19
+Set system name ............................................................................................................................. 19
+Get system mode ............................................................................................................................ 19
+Reboot system................................................................................................................................. 20
+Get services list ............................................................................................................................... 20
+
+2.6
+
+Limitations and Caveats................................................................................................................................. 21
+2.6.1
+Concurrent Connections .................................................................................................................. 21
+2.6.2
+Chunked encoding........................................................................................................................... 21
+2.6.3
+Interaction between t_heat, t_cool and t_mode ............................................................................... 21
+2.6.4
+Differences in behavior with firmware version ................................................................................. 22
+
+2.7
+
+Success and Error Codes .............................................................................................................................. 22
+2.7.1
+Invalid URI ....................................................................................................................................... 22
+2.7.2
+Common Scenarios ......................................................................................................................... 22
+2.7.3
+Thermostat API Errors ..................................................................................................................... 22
+
+3
+
+Marvell Service Discovery Protocol .............................................................................. 23
+
+3.1
+
+Introduction .................................................................................................................................................... 23
+
+3.2
+
+Specification .................................................................................................................................................. 23
+3.2.1
+Message Types: .............................................................................................................................. 23
+3.2.2
+Protocol Version .............................................................................................................................. 23
+3.2.3
+Services........................................................................................................................................... 23
+3.2.4
+Service Matching ............................................................................................................................. 24
+3.2.5
+Message Flow ................................................................................................................................. 24
+3.2.6
+Message Formats ............................................................................................................................ 24
+
+3.3
+
+Limitations and Caveats................................................................................................................................. 25
+
+3.4
+
+Example Program to discover a service ........................................................................................................ 25
+3.4.1
+Source Code ................................................................................................................................... 25
+3.4.2
+Building and executing the sample program .................................................................................... 29
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+3
+
+March 22, 2012
+
+1
+
+Introduction
+
+The Radio Thermostat API is an HTTP API that enables client programs to query the thermostat state, and to
+manage/control the thermostat operation. In the HTTP terminology, the thermostat will be a server that will respond to
+HTTP requests from client devices. The API is designed with a RESTful architecture in mind.
+The API is expected to be used by a variety of client applications such as graphical interface applications running on
+Windows, MAC, or iOS devices. It can also be used by programs such as curl to facilitate control via non-interactive
+client applications. Further, the HTTP GET APIs can be exercised using a browser.
+The Radio Thermostat API provides a set of operations on a typical thermostat device and has been designed to be
+independent of the underlying implementation of the thermostat. This document is intended for use with the Radio
+Thermostat Application Developer’s Guide.
+
+Note
+
+1.1
+
+The API described in this document is for firmware version 1.04.82 (and above)
+and System API version 113 and Thermostat API version 100. This firmware
+can be used with Radio Thermostat’s CT80 Rev A v2.18, CT-30e v1.75, 3M50
+v1.09, and CT80 Rev B v1.00 and later thermostats. Please upgrade to firmware
+version 1.04.82, or later, before using this API.
+
+Resource Model and Data Format
+
+The API is built around a resource model for the thermostat following the RESTful architecture paradigm. The general
+idea is the following:
+•
+
+Each resource is represented by a URI
+
+•
+
+The HTTP operation GET retrieves a (JSON) representation of the resource.
+
+•
+
+The HTTP operation POST updates the resource and assumes a JSON representation of the resource as
+the values to be updated.
+
+•
+
+HTTP 1.1 is supported except for features explicitly mentioned as not supported.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+1
+
+March 22, 2012
+
+1.2
+
+Guidelines for using the API
+
+Radio Thermostat Company of America anticipates that over time, client applications will be required to support an
+installed base of devices that consist of multiple device models, where not all devices will support the most recent API
+versions. This API provides methods to query detailed version information of a device that includes the device model,
+the firmware version, and the wireless software version in addition to the API version. Client applications should use
+the detailed version information to dynamically determine the appropriate API to use while communicating with a
+particular device.
+Any client using this API should follow these guidelines for using the API. These guidelines help in ensuring that the
+client application continues to work with later versions of the API.
+
+•
+
+•
+
+•
+
+The API will continue to evolve as enhanced functionality is included with the API. These revisions to the
+API will be identified by the API version specification. Changes to the API include (but are not restricted to)
+the following:
+o New resources (URIs) could be added
+o New elements could be added to responses of GET and POST methods
+o Error codes are likely to be added and refined. Applications should be prepared to handle new error
+codes.
+Incremental API releases within a major API release will maintain backward compatibility. Care will be taken
+that applications using the older versions of the API do not break, provided they adhere to these guidelines.
+What this implies is:
+o The published resources (URIs) will continue to be accessible in all versions of the API for
+incremental API releases.
+o Various fields within the representation of these resources will carry the same meaning in all
+versions of the API.
+o No fields will be deleted from the HTTP GET response of a resource, although new fields may be
+introduced.
+o A POST with a published set of fields on a URI will always result in the same state transitions
+(effects) at the server end.
+Applications should not expect strict ordering of individual fields within a response. For example,
+
+{ “x”: 1, “y”: 2 } is equivalent to { “y”: 2, “x”: 1 }
+The applications using this API should consider both the above representations to be equivalent.
+
+•
+
+Applications should ignore any other fields in the response that it does not understand. For example, in a
+hypothetical representation with versions, APIv1 and APIv2:
+
+APIv1:
+{ “x”: 1, “y”:2 }
+APIv2:
+{ “x”: 1, “y”: 2, “z”:3 }
+An application that is implemented for APIv1 should work properly with APIv2 as well. Since the application
+is not aware of the field z and its semantics, it should silently ignore that field.
+
+•
+
+If parsing arrays, the applications should ignore any additional indices in the array that they are not aware of.
+For example, in a hypothetical representation with versions, APIv1 and APIv2:
+
+APIv1:
+[ [ “Sunday”, “27” ],
+[ “Monday”, “28” ],
+[ “Tuesday”, “29” ],
+]
+APIv2:
+[ [ “Sunday”, “27”, “Cloudy” ],
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+2
+
+March 22, 2012
+
+[ “Monday”, “28”, “Rainy” ],
+[ “Tuesday”, “29”, “Sunny” ],
+]
+
+An application that is implemented for APIv1 should work properly with APIv2. Since the application is not
+aware of the third index in the array (weather prediction, in this case), it should ignore that.
+
+•
+
+If parsing arrays with header, applications should read the header to understand the relative positions of
+elements within the array. Applications should ignore any columns that they do not understand. For
+example, in a hypothetical representation with versions, APIv1 and APIv2:
+
+APIv1:
+[ [ “date”, “day” ],
+[ “21-10-2010”, “Sunday” ],
+[ “24-11-2010”, “Monday” ],
+]
+APIv2:
+[ [ “time”, “day”, “date” ],
+[ “12:00”, “Sunday”, “21-10-2010” ],
+[ “15:30”, “Monday”, “24-11-2010” ],
+]
+An application that is implemented for APIv1 should work properly with APIv2 as well. Since the application
+is not aware of the field time in the headers, it should ignore that column. The application should also infer
+the indices of the days and date based on the headers mentioned.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+3
+
+March 22, 2012
+
+2
+
+Thermostat API
+
+2.1
+
+Introduction
+
+The thermostat API consists of three types of base resources, a) thermostat, b) system and c) cloud.
+
+2.2
+
+Thermostat Resource
+
+The thermostat resource is a top-level composite resource that is used to retrieve current state of the thermostat and
+update its state (i.e., control the thermostat operation.)
+The location of the thermostat resource is at http://<ip-address>/tstat. This location is returned as part of the service
+discovery protocol.
+The thermostat resource provides a representation for most of the common attributes of a thermostat including the
+room temperature, operating mode, temperature setpoint (target). A client device typically polls the current state of
+the thermostat using the HTTP GET operation on the thermostat resource, and can use up to date thermostat state
+information to maintain its own internal representation of the current state of the thermostat. Likewise, a POST on the
+thermostat resource can be used to change the operating mode, establish new temperature setpoints, etc.
+
+2.2.1 Thermostat API Version
+The thermostat API version defines the API version that this device will use. This document is for Thermostat
+API version 100.
+
+Table 1: Data Representation of Thermostat Version
+Attribute
+
+Description
+
+GET
+
+Version
+
+Thermostat API
+version
+
+X
+
+POST
+
+Data Format
+Integer representing the version
+number of the thermostat API
+supported by the device.
+
+2.2.2 Thermostat Resource Data Representation
+The thermostat resource encapsulates the following attributes.
+
+Table 2: Data Representation for Thermostat Resource
+Attribute
+
+Description
+
+GET
+
+temp
+
+Current temperature
+
+X
+
+tmode
+
+Thermostat operating
+mode
+
+X
+
+fmode
+
+Fan operating mode
+
+X
+
+override
+
+Target temperature
+temporary override
+
+X
+
+Copyright @ 2012
+
+POST
+
+Data Format
+Floating point representing value
+in degrees Fahrenheit.
+
+X
+
+Integer value:
+0: OFF
+1: HEAT
+2: COOL
+3: AUTO
+
+X
+
+Integer value:
+0: AUTO
+1: AUTO/CIRCULATE
+2: ON
+Integer value:
+0: Override is disabled
+
+Radio Thermostat Company of America
+
+4
+
+March 22, 2012
+Attribute
+
+Description
+
+GET
+
+POST
+
+status
+
+Data Format
+1: Override is enabled.
+Note: Firmware versions prior to
+1.04 can return any non-zero
+value if override is enabled.
+
+hold
+
+Target temperature
+Hold status
+
+X
+
+X
+
+Integer value:
+0: Hold is disabled
+1: Hold is enabled
+
+t_heat
+
+Temporary Target
+Heat Setpoint: Sets
+target and MODE
+
+X
+
+X
+
+Floating point representing
+temperature value in degree
+#
+Fahrenheit.
+
+t_cool
+
+Temporary Target
+Cool Setpoint: Sets
+target and MODE
+
+X
+
+X
+
+Floating point representing
+temperature value in degree
+#
+Fahrenheit.
+
+it_heat
+
+Temporary Target
+Heat Setpoint
+
+X
+
+X
+
+Floating point representing
+temperature value in degree
+Fahrenheit.
+
+It_cool
+
+Temporary Target
+Cool Setpoint
+
+X
+
+X
+
+Floating point representing
+temperature value in degree
+Fahrenheit.
+
+a_heat
+
+Absolute Target Heat
+Setpoint
+
+X
+
+X
+
+Floating point representing
+temperature value in degree
+Fahrenheit.
+
+a_cool
+
+Absolute Target Cool
+Setpoint
+
+X
+
+X
+
+Floating point representing
+temperature value in degree
+Fahrenheit.
+
+a_mode
+
+Absolute Target
+Temperature Mode
+
+X
+
+Integer representing the absolute
+target temperature mode.
+0 – Disable Absolute Target
+Temperature Mode
+1– Enable Absolute Target
+Temperature Mode
+
+t_type_post
+
+Target Temperature
+POST type
+
+X
+
+Integer value that indicates
+whether a POST on
+t_heat/t_cool will result in
+temporary or absolute
+temperature change.
+0: Temporary Target
+Temperature
+1: Absolute Target Temperature
+2: Unknown
+This attribute is deprecated and
+will be obsoleted in future
+#
+versions of the API.
+
+tstate
+
+Copyright @ 2012
+
+HVAC Operating
+State
+
+X
+
+Integer value:
+0: OFF
+1: HEAT
+2: COOL
+Note: This functionality may not
+
+Radio Thermostat Company of America
+
+5
+
+March 22, 2012
+Attribute
+
+Description
+
+GET
+
+POST
+
+Data Format
+be available in all models of the
+thermostat.
+
+fstate
+
+Fan Operating State
+
+X
+
+time
+
+Thermostat’s internal
+representation of time
+
+X
+
+X
+
+JSON object with the following
+fields: day, hours, minutes.
+day: Integer value representing
+the day of the week, with day 0
+being Monday.
+hour: Integer value representing
+number of hours elapsed since
+midnight.
+minutes: Integer value
+representing number of minutes
+since start of the hour.
+
+program_mode
+
+Program Mode
+
+X
+
+X
+
+Integer representing the current
+program mode:*
+
+Integer value:
+0: OFF
+1: ON
+Note: Only available with CT-30
+
+0: Program A
+1: Program B
+2: Vacation
+3: Holiday
+ttarget
+
+Current operating
+target
+
+X
+
+Integer representing the current
+target operating mode. For
+example, if the thermostat is in
+AUTO mode and operating
+toward a cool target, then this
+value will be 2.
+Valid values:
+0: Off
+1: Heat
+
+2: Cool
+# - The default behavior of POST on t_heat and t_cool is to update the temporary target temperature. Some
+custom flavors of the firmware update the absolute target temperature when t_heat or t_cool values are
+updated. This distinction can be made by referring to the t_type_post attribute. This differing behavior is
+deprecated and will be obsoleted in future versions of the API. No comment can be made about whether the
+t_heat/t_cool data returned in a GET /tstat/ response indicates temporary or absolute target temperatures.
+* - Some thermostat models may not support all program modes.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+6
+
+March 22, 2012
+
+2.2.3 Thermostat Program Resource
+The thermostat maintains two programs – a heat program and a cool program. Every program entry consists
+of time and the corresponding temperature setpoint. Every day of the week can have a set of time-setpoint pair
+programmed in the thermostat.
+
+2.2.3.1
+
+Thermostat Program for a Day
+
+The thermostat program for a single day (for either the heat or cool) mode can be accessed directly
+using a URI as follows:
+•
+
+http://<ip-address>/tstat/program/<mode>/<day>
+
+where <mode> is either heat or cool. The <day> is one of mon, tue, wed, thu, fri, sat, or sun.
+
+Table 3: Data Representation for program for a day resource
+Data Format
+
+Explanation
+
+“d”:[a1, b1, a2, b2, a3, b3, …]
+
+Where:
+value of d is one of 0, 1, 2, 3, 4, 5, 6
+representing mon, tue, wed, thu, fri, sat and
+sun respectively.
+value of a<i> is the time expressed as minutes
+from the start of the day (Integer)
+value of b<i> is the temperature at time a<i>
+expressed in degree Fahrenheit (Floating
+point)
+
+2.2.3.2
+
+Thermostat Program for a week
+
+The programs for the entire week are also available at the following URI’s:
+• http://<ip-address>/tstat/program/heat
+• http://<ip-address>/tstat/program/cool
+Each of the heat or cool programs consists of one program for each day of the week. The data
+format of the response consists of all the attributes corresponding to the days of the week, from 0
+to 6. The rest of the format is as explained in Section 2.2.2.1.
+
+2.2.4 Thermostat Model
+The thermostat model resource is a string that provides the model number and firmware version of the
+thermostat. The thermostat model resource is available at:
+•
+
+http://<ip-address>/tstat/model
+
+Table 4: Data Representation of Thermostat Model
+Attribute
+
+Description
+
+GET
+
+Model
+
+Thermostat model
+and version
+
+X
+
+POST
+
+Data Format
+String representing the model
+and version number.
+
+2.2.5 Thermostat LED
+The thermostat LED resource provides control over the LEDs available on the thermostat. The thermostat led
+resource is available at:
+•
+
+http://<ip-address>/tstat/led
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+7
+
+March 22, 2012
+
+Table 5: Data Representation of Thermostat LED
+Attribute
+
+Description
+
+GET
+
+energy_led
+
+Energy LED Status
+Code
+
+POST
+X
+
+Data Format
+Integer that represents:
+0 – Off
+1 – Green
+2 – Yellow
+
+4 – Red
+Note: The LED state is volatile. The state of the LED may change when the WiFi module or the thermostat
+reboots, or when the thermostat modifies it to show energy status.
+
+2.2.6 Thermostat Messaging Areas
+The thermostats typically have one of two types of messaging areas, Price Messaging Area (PMA) and User
+Messaging Area (UMA). Some models may not have a messaging area. The thermostat messaging areas
+resource allows control of these user areas. The thermostat messaging area resources are available at:
+•
+
+http://<ip-address>/tstat/pma
+
+•
+
+http://<ip-address>/tstat/uma (Only available on CT80)
+
+Table 6: Data Representation of Thermostat User Messaging Area (uma)
+Attribute
+
+Description
+
+GET
+
+line
+
+The line no. of the
+messaging area
+
+POST
+
+Data Format
+
+X
+
+Integer representing the line
+number to write to.
+Valid Values: 0, 1
+
+message
+
+X
+
+The message to be
+displayed
+
+String containing the desired
+message to display.
+
+Table 7: Data Representation of Thermostat Price Messaging Area (pma)
+Attribute
+
+Description
+
+GET
+
+line
+
+The line no. of the
+messaging area
+
+POST
+
+Data Format
+
+X
+
+Integer representing the line
+number to write to.
+Valid Values: 0, 1, 2, 3
+
+message
+
+The message to be
+displayed
+
+X
+
+String containing the desired
+message to display.
+Note: The PMA can only display
+numbers
+
+mode
+
+Enable/Disable
+control for uma and
+pma
+
+X
+
+Integer Value:
+0 = Disable
+
+2 = Enable
+Note: The PMA/UMA state is volatile. Their state may change when the WiFi module or the thermostat
+reboots, or when the thermostat modifies it to show updates.
+Note: If a message field is specified the UMA/PMA is automatically turned on regardless of the value of mode.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+8
+
+March 22, 2012
+
+2.2.7 Thermostat Remote Temperature
+The thermostat remote temperature resource is used to control the remote temperature settings of the
+thermostat. The thermostat remote temperature resource is available at:
+•
+
+http://<ip-address>/tstat/remote_temp
+
+Table 8: Data Representation of Thermostat Remote Temperature
+Attribute
+
+Description
+
+GET
+
+POST
+
+rem_mode
+
+Remote Temperature
+Mode
+
+X
+
+X
+
+rem_temp
+
+X
+
+The message to be
+displayed
+
+Data Format
+Integer representing the current
+remote temperature mode of the
+thermostat (1 – enabled, 0 –
+disabled).
+For POST, the only valid value is
+0, which disables the remote
+temperature mode.
+Integer representing the value of
+the remote temperature in
+Fahrenheit. The remote
+temperature will take the place of
+the ambient temperature as read
+by the local thermostat
+temperature sensor.
+A valid POST to this attribute
+automatically sets the remote
+temperature mode to 1.
+
+2.2.8 Thermostat Lock Mode
+This resource is available at:
+•
+
+http://<ip-address>/tstat/lock
+
+Table 9: Data Representation of Thermostat Lock Temperature
+Attribute
+
+Description
+
+GET
+
+POST
+
+lock_mode
+
+Thermostat Lock
+Mode
+
+X
+
+X
+
+Data Format
+Integer that represents:
+0 = lock disabled
+1 = partial lock
+2 = full lock
+3 = utility lock (accessible via the
+radio only)
+
+2.2.9 Thermostat Simple Mode
+This resource is available at:
+•
+
+http://<ip-address>/tstat/simple_mode
+
+Table 10: Data Representation of Thermostat Simple Mode
+Attribute
+
+Description
+
+GET
+
+POST
+
+simple_mode
+
+Thermostat Simple
+Mode
+
+X
+
+X
+
+Copyright @ 2012
+
+Data Format
+Integer value:
+1 = normal mode
+2 = simple mode
+
+Radio Thermostat Company of America
+
+9
+
+March 22, 2012
+
+2.2.10 Thermostat Save Energy
+This resource is available at:
+•
+
+http://<ip-address>/tstat/save_energy
+
+Table 11: Data Representation of Thermostat Save Energy
+Attribute
+
+Description
+
+GET
+
+POST
+
+mode
+
+Thermostat save
+energy mode
+
+X
+
+X
+
+type
+
+Save energy mode
+type
+
+X
+
+X
+
+Delta
+
+Save energy
+temperature delta
+
+X
+
+X
+
+Data Format
+Integer value:
+0 = disable
+1 = enable
+Integer value:
+1 = Adjust target by delta
+2 = Go to least consuming point
+in the running program
+3 = Save energy absolute
+setpoint
+Available only when mode and
+type are 1
+Float value:
+0.5 degree increments with a
+valid temperature range from 1
+to 9 degrees.
+
+2.2.11 Thermostat Temperature Swing
+This resource is available at:
+•
+
+http://<ip-address>/tstat/tswing
+
+Table 12: Data Representation of Thermostat Temperature Swing
+Attribute
+
+Description
+
+GET
+
+POST
+
+tswing
+
+Thermostat
+temperature swing
+
+X
+
+X
+
+Data Format
+Float value 0.5 degree
+increments with a valid
+temperature range from 0.5 to
+3.0 degrees F.
+
+2.2.12 Thermostat Night Light
+This resource is available at:
+•
+
+http://<ip-address>/tstat/night_light
+
+Table 13: Data Representation of Thermostat Night Light
+Attribute
+
+Description
+
+GET
+
+POST
+
+intensity
+
+Thermostat night light
+intensity
+
+X
+
+X
+
+Copyright @ 2012
+
+Data Format
+Integer value:
+0 = off
+1 = 25%
+2 = 50%
+3 = 75%
+4 = 100%
+
+Radio Thermostat Company of America
+
+10
+
+March 22, 2012
+
+2.2.13 Thermostat Temperature Differential
+This resource is available at:
+•
+•
+
+http://<ip-address>/tstat/cool
+http://<ip-address>/tstat/heat
+
+Table 14: Data Representation of Thermostat Temperature Differential
+Attribute
+
+Description
+
+GET
+
+POST
+
+temp_diff
+
+Thermostat
+temperature
+differential
+
+X
+
+X
+
+Data Format
+Float value 1.0 degree
+increments with a valid
+temperature range from 2.0 to
+6.0 degrees F.
+
+2.2.14 Thermostat Stage Delay
+This resource is available at:
+•
+
+http://<ip-address>/tstat/stage_delay
+
+Table 15: Data Representation of Thermostat Stage Delay
+Attribute
+
+Description
+
+GET
+
+POST
+
+stage_delay
+
+Thermostat stage to
+stage delay
+
+X
+
+X
+
+Data Format
+Integer value:
+0 to 60 minutes
+
+2.2.15 Thermostat Fan Circulation Time
+This resource is available at:
+•
+
+http://<ip-address>/tstat/fan_ctime
+
+Table 16: Data Representation of Thermostat Fan Circulation Time
+Attribute
+
+Description
+
+GET
+
+POST
+
+fan_ctime
+
+Thermostat fan
+circulation time
+
+X
+
+X
+
+Data Format
+Integer value:
+1 to 9 minutes
+
+2.2.16 Thermostat Humidity
+This resource is available at:
+•
+
+http://<ip-address>/tstat/humidity
+
+Table 17: Data Representation of Thermostat Humidity
+Attribute
+
+Description
+
+GET
+
+humidity
+
+Current humidity
+value
+
+X
+
+Copyright @ 2012
+
+POST
+
+Data Format
+Float value:
+Value is % relative humidity from
+0 to 100%
+
+Radio Thermostat Company of America
+
+11
+
+March 22, 2012
+
+2.2.17 Thermostat Humidifier Setpoint
+This resource is available at:
+•
+
+http://<ip-address>/tstat/thumidity
+
+Table 18: Data Representation of Thermostat Humidifier Setpoint
+Attribute
+
+Description
+
+GET
+
+POST
+
+thumidity
+
+Current humidifier
+setpoint value
+
+X
+
+X
+
+Data Format
+Float value:
+Value is % relative humidity from
+0 to 100%
+
+2.2.18 Thermostat Humidifier
+This resource is available at:
+•
+
+http://<ip-address>/tstat/humidifier
+
+Table 19: Data Representation of Thermostat Humidifier
+Attribute
+
+Description
+
+GET
+
+POST
+
+humidifier_mode
+
+Thermostat humidifier
+mode
+
+X
+
+X
+
+Data Format
+Integer Value:
+0 = off
+1 = run only with heat
+2 = humidity anytime (runs fan)
+
+2.2.19 Thermostat Dehumidifier
+This resource is available at:
+•
+
+http://<ip-address>/tstat/dehumidifier (Only available on CT80)
+
+Table 20: Data Representation of Thermostat Dehumidifier
+Attribute
+
+Description
+
+GET
+
+POST
+
+mode
+
+Dehumidifier mode
+
+X
+
+X
+
+setpoint
+
+Dehumidifier setpoint
+
+X
+
+X
+
+Data Format
+Integer value:
+0 = off
+1 = on with fan
+2 = on without fan
+Integer value:
+Relative humidity from 20 to 90
+in percentage
+
+2.2.20 Thermostat External Dehumidifier
+This resource is available at:
+•
+
+http://<ip-address>/tstat/ext_dehumidifier (Only available on CT80)
+
+Table 21: Data Representation of Thermostat External Dehumidifier
+Attribute
+
+Description
+
+GET
+
+POST
+
+mode
+
+External dehumidifier
+mode
+
+X
+
+X
+
+setpoint
+
+External dehumidifier
+setpoint
+
+X
+
+X
+
+Copyright @ 2012
+
+Data Format
+Integer value:
+0 = off
+1 = Humidistat with thermostat
+2 = Always with AC
+Integer value:
+Relative humidity from 20 to 90
+in percentage
+
+Radio Thermostat Company of America
+
+12
+
+March 22, 2012
+
+2.2.21 Thermostat Time Format
+This resource is available at:
+•
+
+http://<ip-address>/tstat/time/format
+
+Table 22: Data Representation of Thermostat Time Format
+Attribute
+
+Description
+
+GET
+
+POST
+
+format
+
+Time display format
+
+X
+
+X
+
+Data Format
+Integer value:
+1 = 12 hour format (AM/PM)
+2 = 24 hour format
+
+2.2.22 Thermostat Air Baffle
+This resource is available at:
+•
+
+http://<ip-address>/tstat/air_baffle
+
+Table 23: Data Representation of Thermostat Air Baffle
+Attribute
+
+Description
+
+GET
+
+POST
+
+baffle_mode
+
+External air baffle
+mode
+
+X
+
+X
+
+Copyright @ 2012
+
+Data Format
+Integer value:
+0 = External air baffle closed
+1 = External air baffle opened
+temporarily
+2 = External air baffle opened
+permanently (set by radio bus
+only)
+
+Radio Thermostat Company of America
+
+13
+
+March 22, 2012
+
+2.2.23 Thermostat HVAC Settings
+This resource is available at:
+•
+
+http://<ip-address>/tstat/hvac_settings
+
+There are two formats for this resource, one for the 3m50/CT30 and one for the CT80
+
+Table 24: Data Representation of Thermostat HVAC Settings (3m50)
+Attribute
+
+Description
+
+GET
+
+pump
+
+Normal/Pump
+
+X
+
+aux_type
+
+Auxiliary type is
+Gas/Electric
+
+X
+
+hvac_code
+
+HVAC Setting
+Code
+
+X
+
+POST
+
+Data Format
+Integer Value:
+1 = Normal
+2 = Heat Pump
+Integer value:
+If Normal:
+1 = Heat source is Gas
+2 = Heat source is Electric
+If Heat Pump:
+1 = Auxiliary is Gas
+2 = Auxiliary is Electric
+Integer value:
+For Normal:
+1 = 1 stage heat, 1 stage cool
+2,4 = 2 stage heat, 1 stage cool
+3,5 = 2 stage heat, 2 stage cool
+For Heat Pump:
+10,11 = 1 stage pump, 1 stage aux
+12 = 1 stage pump, no aux
+
+Table 25: Data Representation of Thermostat HVAC Settings (CT80)
+Attribute
+
+Description
+
+GET
+
+pump
+
+Normal/Pump
+
+X
+
+aux_stages
+
+Auxiliary Stages
+
+X
+
+aux_type
+
+Auxiliary type is
+Gas/Electric
+
+X
+
+heat_stages
+
+Heat pump stages
+
+X
+
+cool_stages
+
+Cool stages
+
+X
+
+Copyright @ 2012
+
+POST
+
+Data Format
+Integer Value:
+1 = Normal
+2 = Heat Pump
+Integer Value:
+If Heat Pump, this value is encoded
+as the number of auxiliary stages.
+If Normal, this value is encoded as
+the number of heat stages.
+Integer value:
+If Normal:
+1 = Heat source is Gas
+2 = Heat source is Electric
+If Heat Pump:
+1 = Auxiliary is Gas
+2 = Auxiliary is Electric
+Integer Value:
+Number of heat pump stages
+Integer Value:
+Number of cool stages
+
+Radio Thermostat Company of America
+
+14
+
+March 22, 2012
+
+2.3
+
+System Resource
+2.3.1 Basic system information
+Table 26: Data Representation of /sys
+URI
+
+GET
+
+/sys
+
+X
+
+POST
+
+Data Format
+The data returned has the following information:
+UUID: unique identifier for the device (String)
+api_version: HTTP API version. This specification is for
+api_version=113. (Integer)
+fw_version: Firmware version (String)
+wlan_fw_version: Underlying WLAN firmware version (referred
+from WiFi-certification documentation)(String)
+Example: { "uuid": "0021e82d978f",
+"api_version":113,
+"fw_version":"1.04.64",
+"wlan_fw_version":"v10.105576"
+}
+
+2.3.2 System Service
+Table 27: Data Representation of /sys/services
+URI
+
+GET
+
+/sys/services
+
+X
+
+POST
+
+Data Format
+The data returned has the following information:
+services_names: A list of service names available on the device. This
+is the same as that announced on the SSDP protocol by this device.
+This is returned as a JSON array of strings. Each member of the array
+identifies one service.
+httpd_handlers: A list of all the URIs that are available along with the
+kind of operations (GET/POST) available on them. This is returned as
+JSON attribute-value pairs of the form “u1”:[a1, b1] where,
+ui: the URI
+ai: 1-GET is allowed, 0-GET is not allowed
+bi: 1-POST-allowed, 0-POST is not allowed
+Note that while all the URIs on the /sys/ resource are listed, only the
+top-level URIs of other resources are listed.
+Example:
+{
+"service_names": [
+"com.rtcoa.tstat:1.0",
+"devices.controller.tstat:1.0"
+],
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+15
+
+March 22, 2012
+URI
+
+GET
+
+POST
+
+Data Format
+"httpd_handlers":{
+"/tstat":[1,1],
+“/cloud”: [1,1],
+"/sys/network":[1,1],
+“/sys/updater":[0,1],
+"/sys/filesystem":[0,1],
+"/sys/firmware":[0,1],
+"/sys/fs-image":[0,1],
+"/sys/fw-image":[0,1],
+"/sys/command":[0,1],
+"/sys/services":[1,0],
+"/sys/mode":[1,1],
+"/sys/name":[1,1],
+“/sys/reboot”:[1,1],
+}
+}
+
+2.3.3 System Name
+Table 28: Data Representation of /sys/name
+URI
+
+GET
+
+POST
+
+Data Format
+
+/sys/name
+
+X
+
+X
+
+name: Descriptive system name for easy identification(String)
+Example: {"name":"thermostat-2D-97-8F"}
+
+2.3.4 System Command Handler
+Table 29: Data Representation of /sys/command
+URI
+
+GET
+
+/sys/command
+
+POST
+
+Data Format
+
+X
+
+command: Command to be issued to command handler.
+Currently only “reboot” command is supported. (String)
+
+2.3.5 System Operating Mode
+Table 30: Data Representation of /sys/mode
+URI
+
+GET
+
+POST
+
+Data Format
+
+/sys/mode
+
+X
+
+X
+
+mode: Indicates system operating mode. 0 – provisioning, 1 –
+normal (Integer)
+Example: {"mode": 0}
+•
+
+Copyright @ 2012
+
+A POST with the value of mode as 0, resets the device
+back into provisioning mode.
+
+Radio Thermostat Company of America
+
+16
+
+March 22, 2012
+
+2.3.6 Network Configuration
+Table 31: Data Representation of /sys/network
+URI
+
+GET
+
+/sys/network
+
+X
+
+POST
+
+Data Format
+
+For GET:
+The network information consists of the following attributes in
+JSON format
+ssid (String): SSID of the configured network
+bssid (String): BSSID of the configured network
+channel (Integer): WLAN Radio Channel
+security (Integer): Security mode as defined in /sys/scan
+ip (Integer): Indicates whether IP address is configured via
+DHCP or statically assigned. 0 – static, 1 – dhcp.
+ipaddr (String): IP address
+ipmask (String): Subnet mask
+ipgw (String): Gateway
+ipdns1 (String): Primary DNS Server#
+ipdns2 (String): Secondary DNS Server#
+rssi (String): Signal Strength
+(Note: API versions before v112 included the passphrase member in the GET response. This has been
+discontinued for later versions of the API.)
+
+2.4
+
+Deprecated APIs
+
+The following APIs have been deprecated from earlier versions:
+•
+
+/sys/info
+
+•
+
+/cloud/url
+
+•
+
+/cloud/authkey
+
+•
+
+the t_type_post field in the /tstat/ resource
+
+•
+
+the behavior that sets absolute target temperatures in response to t_heat and t_cool fields in the /tstat/
+resource
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+17
+
+March 22, 2012
+
+2.5
+
+Using the API with Curl
+
+The easiest way to explore the API is using curl command-line program that can be used to do both GET and POST
+operations. The following examples illustrate some common use-cases.
+
+2.5.1 Get Thermostat State
+The most common operation is to retrieve the current dynamic state of the thermostat resource.
+$ curl http://192.168.1.101/tstat
+{"temp":76.50,"tmode":2,"fmode":0,"override":0,"hold":0,"t_cool":85.00,"time":{"d
+ay":6,"hour":12,"minute":54}}
+
+2.5.2 Set target heat temperature to 72 in HEAT mode
+The following curl command will set the thermostat operating mode to HEAT and the target heat temperature
+to 72.
+$ curl -d '{"tmode":1,"t_heat":72}' http://192.168.1.101/tstat
+{“success”: 0}
+
+2.5.3 Set target heat temperature to 74 and enable hold
+The following curl command switches the thermostat to HEAT mode, enables hold state, and sets the target
+temperature to 74.
+$ curl -d '{"tmode":1,"t_heat":74,"hold":1}' http://192.168.1.101/tstat
+{“success”: 0}
+
+2.5.4 Set target cool temperature to 80
+The following curl command sets the thermostat operating mode to COOL, enables temporary override, and
+sets the target temperature to 80.
+$ curl -d '{"tmode":2,"t_cool":80}'
+
+http://192.168.1.101/tstat
+
+{“success”: 0}
+
+2.5.5 Set fan mode to ON
+The following curl command sets the fan mode to ON.
+$ curl -d '{"fmode":2}' http://192.168.1.101/tstat
+{“success”: 0}
+
+2.5.6 Get Heat Program Information for Monday
+The following command retrieves the heat program for Monday (day 0). The values in the program are: 70
+degrees at 12:50 AM (50 minutes into the day), 71 degrees at 1:40 AM (100 minutes into the day), and so on.
+$ curl http://192.168.1.101/tstat/program/heat/mon
+{"0":[50,70,100,71,150,72,200,73]}
+
+2.5.7 Get Heat Program Information for the Whole Week
+$ curl http://192.168.1.101/tstat/program/cool
+{"0":[450,80,550,90,650,100,750,95],"1":[360,78,480,85,1080,78,1320,82],"2":[360,
+78,480,85,1080,78,1320,82],"3":[360,78,480,85,1080,78,1320,82],"4":[360,78,480,85
+,1080,78,1320,82],"5":[360,78,480,85,1080,78,1320,82],"6":[360,78,480,85,1080,78,
+1320,82]}
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+18
+
+March 22, 2012
+
+2.5.8 Update Cool Program for Tuesday
+$ curl -d '{"1":[120,80,240,81,360,82,480,83]}'
+http://192.168.1.101/tstat/program/cool/tue
+{“success”: 0}
+In the above POST message, index “1” corresponds to the day Tuesday. Note that the index and the day
+specified (Tuesday) in the URL must match.
+This POST message programs the cool settings for Tuesday as follows.
+2am: 80 degrees
+4am: 81 degrees
+6am: 82 degrees
+8am: 83 degrees
+
+2.5.9 Get the Thermostat Model and Firmware Version
+$ curl http://192.168.1.101/tstat/model
+{"model":"CT80 V2.14T"}
+The above shows that the thermostat is a CT-80 running thermostat firmware version v2.14T. Note that the
+thermostat firmware version is different from the firmware version running on the USNAP Wi-Fi module.
+Together, the thermostat model and thermostat firmware version enable the application developer to correctly
+utilize model specific features for a particular device. In general, an application developer should use all of the
+following version indicators to program a particular device correctly:
+1. Thermostat model and Thermostat firmware version information as returned by the /tstat/model
+command. These provide an insight into the capabilities of the hardware.
+2. Thermostat API version information as returned by the /tstat/version command. This provides
+information on the thermostat operations supported by a particular version of the USNAP WiFi
+firmware.
+3. The thermostat System API version information as returned by the /sys command in the
+api_version field. This provides insight into the system level capabilities supported by a particular
+version of the USNAP WiFi firmware.
+
+2.5.10 Get basic system information
+$ curl http://192.168.1.101/sys
+{"uuid":"0021e82d94e4","api_version":113,"fw_version":"1.04.64","wlan_fw_version"
+:"v10.105576"}
+The above command fetches the basic state of the system
+
+2.5.11 Set system name
+The following command names the device as “tstat-livingroom”.
+$ curl -d '{"name":"tstat-livingroom "}' http://192.168.1.101/sys/name
+{"success": 0}
+The default value for name is "thermostat-xy-za-bc". Where xy-za-bc represent the last 6 hexadecimal digits of
+the MAC address of the thermostat.
+
+2.5.12 Get system mode
+$ curl http://192.168.1.101/sys/mode
+{"mode":1}
+The above response indicates that the system is in “normal” mode.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+19
+
+March 22, 2012
+
+2.5.13 Reboot system
+The following command reboots the system.
+$ curl -d '{"command":"reboot"}' http://192.168.1.101/sys/command
+{"success": 0}
+
+2.5.14 Get services list
+The following command retrieves the list of services available on the device:
+
+$ curl http://192.168.1.101/sys/services
+{"service_names":["com.rtcoa.tstat:1.0","devices.controller.tstat:1.0"],"
+httpd_handlers":{"/tstat":[1,1], "/cloud": [1,1],
+"/sys/network":[1,1],"/sys/updater":[0,1],"/sys/fs-image":[0,1],"/sys/fwimage":[0,1], "/sys/command":[0,1], "/sys/services":[1,0],
+"/sys/mode":[1,1], "/sys/name":[1,1]}}
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+20
+
+March 22, 2012
+
+2.6
+
+Limitations and Caveats
+2.6.1 Concurrent Connections
+The web server is single threaded and connection requests are processed serially. Thus a new connection
+request is processed only after an existing connection has been terminated.
+
+2.6.2 Chunked encoding
+Chunked encoding is NOT supported by the web server.
+
+2.6.3 Interaction between t_heat, t_cool and t_mode
+The thermostat resource has two temperature setpoints: t_heat and t_cool (for heat and cool setpoints).
+Depending on the current operating mode, either the heat setpoint or the cool setpoint (or none if the mode is
+OFF) is returned.
+Additionally, t_heat can be set only t_mode is HEAT and t_cool can only be set when t_mode is COOL. If
+t_mode is not specified correctly, then the mode will be switched automatically.
+The resources it_heat and it_cool behave similar to t_heat and t_cool respectively. The only difference being
+these do not automatically switch the target mode as is done with t_heat and t_cool.
+Depending on the thermostat model, some advanced modes may not be available.
+
+Table 32: Differences between Thermostats
+Feature
+
+CT-30
+
+CT80 Rev A
+
+CT80 Rev B
+
+Auto/Circulate Fan Operating
+Mode (fmode is
+AUTO/CIRCULATE)
+
+Not Available
+
+Available
+
+Available
+
+Automatic Thermostat Operating
+Mode (tmode is AUTO)
+
+Not Available
+
+Available
+
+Available
+
+Number of Program Settings per
+day (per mode – heat or cool)
+
+4
+
+7
+
+7
+
+Override status after setting a
+temporary target using the HTTP
+API (e.g. command in Sec 2.5.2
+and Sec 2.5.4)
+
+When override
+status is read, it is
+reported as 0. This
+is a known issue in
+thermostat
+firmware.
+
+Override is
+reported back
+correctly as 1.
+
+Override is
+reported back
+correctly as 1.
+
+Humidifier
+
+Not Available
+
+Available
+
+Available
+
+De-humidifer and external
+dehumidifier
+
+Not Available
+
+Not Available
+
+Available
+
+Program Mode
+
+Not Available
+
+Not Available
+
+Available
+
+Lock Mode, Simple Mode, Save
+Energy, Temperature Swing,
+Night Light, Temperature
+Differential, Stage Delay, Fan
+Circulation Time, Time Format,
+Air Baffle
+
+Not Available
+
+Not Available
+
+Available
+
+it_heat, it_cool, and ttarget
+support in AUTO
+
+Not Available
+
+Not Available
+
+Available
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+21
+
+March 22, 2012
+
+2.6.4 Differences in behavior with firmware version
+This document is compatible with firmware version 1.04.82, or later. Please upgrade to this firmware version.
+Apart from differences listed in the preceding sections of the document, there is one difference in the way the
+firmware responds to any HTTP request. All the HTTP interactions (apart from upgrade) operate on JSON
+encoded data. All the data being sent and received from the device will be in JSON format. For example, for
+firmware versions prior to 1.04, a successful POST response is a string: “Tstat Command Processed”.
+For firmware versions 1.04 and later, a successful POST response is also JSON encoded as follows:
+“{"success": 0}”.
+
+2.7
+
+Success and Error Codes
+2.7.1 Invalid URI
+In response to Invalid URI requests a 404 HTML page redirecting back to the home page is returned.
+
+2.7.2 Common Scenarios
+All the operations return the following common success/error messages.
+•
+
+For success
+
+{ "success" : 0 }
+Note1: In the firmware 1.04.64 or lower,
+o a success is reported even when an invalid field is included in the POST request.
+o a success is reported if multiple fields are POSTed and only a few of them are invalid.
+Note2: In future releases of the firmware,
+o if no valid field is specified an error would be returned.
+o if multiple fields are POSTed, the return will be {"success":n} where n indicates the number of valid
+fields in the request that were processed.
+•
+
+For error
+
+{ "error": -1 }
+•
+
+(Most likely cause, if some field is missing in the POST data)
+For invalid URLs
+{ "error_msg" : "Invalid HTTP API" }
+
+2.7.3 Thermostat API Errors
+There may be some transient errors when communicating with the thermostat firmware. When these errors
+occur, the thermostat specific values are reported as -1. For example:
+•
+
+{ “tmode”: -1, “fmode”: 2, “temp”: -1, “hold”: 1}
+
+In the above JSON string, there was an error while retrieving the values of tmode and temp.
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+22
+
+March 22, 2012
+
+3
+
+Marvell Service Discovery Protocol
+
+3.1
+
+Introduction
+
+The Marvell Service Discovery Protocol is a simple protocol designed to enable client programs to discover (web/http)
+services offered by devices using Marvell Wireless Micro-controller solution. The protocol itself is modeled after the
+Simple Service Discovery Protocol (SSDP), which was the basis for UPNP Service Discovery.
+The description in this document is for service discovery protocol version 1.
+Note
+
+3.2
+
+Specification
+3.2.1 Message Types:
+Message
+Type
+
+Description
+
+WMDISCOVER
+
+The WM-DISCOVER request is sent by a client to find services. The request is sent on
+UDP multicast address 239.255.255.250 at port 1900. The message includes the services
+that the client is interested in.
+
+WM-NOTIFY
+
+The WM-NOTIFY is a response to the WM-DISCOVER request when a device offers a
+matching service. It’s a unicast UDP message to the sender of the WM-DISCOVER
+request. The response message includes a list of the matching services that the device
+offers along with the Base URI for each service.
+
+WMPRESENCE
+
+The WM-PRESENCE message is a multicast of the services offered by a device. This is
+not yet implemented.
+
+3.2.2 Protocol Version
+The current service discovery protocol version is 1.0. This is included in all messages, and will enable protocol
+upgrade in the future.
+
+3.2.3 Services
+Conceptually, a service is identified by a name and a location. The goal of the service discovery protocol is to
+find the location of a service given its name. More specifically, a service definition includes the following fields.
+Field
+
+Description
+
+Mandatory/Optional
+
+Location
+
+The service location is the URI at which the service is
+located. The primary focus is on HTTP based services, so the
+Location would be something like: http://<IPAddress>/<Service-Prefix> that has the IP-address of
+the device and the Service-Prefix for the URI's for the service.
+
+Mandatory
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+23
+
+March 22, 2012
+Optional, if device
+qualified name is
+present. Otherwise
+mandatory.
+
+Manufacturer
+Qualified
+Name
+
+A service is identified by a name (string). In order to make the
+services unique, we use the Reverse-DNS naming
+convention to identify services - a convention that has been
+used in Java (See: http://en.wikipedia.org/wiki/Reverse-DNS).
+
+Device
+Qualified
+Name
+
+This is an alternate service name (string) that can be used to
+define a generic service that is not tied to a specific
+manufacturer.
+
+Optional, if manufacturer
+qualified name is
+present. Otherwise
+mandatory.
+
+Manufacturer
+Fingerprint
+(ID)
+
+The service can carry a manufacturer fingerprint (or ID) that
+can be used by manufacturers to ensure a level of protection
+and security.
+
+Optional
+
+3.2.4 Service Matching
+Service discovery requests send a service name string that the client is interested in. The query may include a
+"*" wild-card at the end of the string. A service match occurs:
+•
+
+If the wildcard is used, then the service name prefix in the discovery request exactly matches with
+the initial part of one of the service names.
+
+•
+
+If the wildcard is not used, then the service name in the discovery request should match exactly
+with one of the service names.
+
+If the service request contains only the wildcard, without a prefix string, all the services available on the device
+match.
+
+3.2.5 Message Flow
+■ A client that wants to discover WM services will send a discovery request to 239.255.255.250:1900
+(UDP).
+■ If a device with matching services is present, it sends a discovery response (unicast UDP
+message)
+■ Every thermostat device announces the availability of services on boot-up (start of services). (not
+implemented yet)
+■ Every thermostat device should also announce availability of services on starting network services.
+Network services have to be stopped before entering deep sleep and restarted, if required, on
+waking up from deep sleep. (not implemented yet)
+
+3.2.6 Message Formats
+Message Type
+
+Message Format
+
+Notes
+
+WM-DISCOVER
+
+TYPE: WM-DISCOVER
+VERSION: 1.0
+SERVICES: <servicerequest-string>
+
+The service request string may consist of one or
+more service requests. Multiple requests are
+treated as a request to match any one of the
+services. Multiple requests are separated by a
+comma (","). Any service request may have a "*"
+at the end.
+
+WM-NOTIFY
+
+TYPE: WM-NOTIFY
+VERSION: 1.0
+SERVICE: <servicename>
+LOCATION: <locationuri>
+
+There may be one or more
+SERVICE/LOCATION pairs. One for each of the
+matching services. If a service is described by
+both a manufacturer and a device qualified name,
+the two names will be separated by a semicolon
+(";").
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+24
+
+March 22, 2012
+
+3.3
+
+Limitations and Caveats
+
+The protocol does not currently have any expiration information or announcements of termination of services.
+
+3.4
+
+Example Program to discover a service
+3.4.1 Source Code
+/*
+*
+
+Copyright (C) 2009-2010, Marvell International Ltd.
+
+*
+
+All Rights Reserved.
+
+*/
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_BUF 4096
+#define LOCATION_HDR "Location:"
+#define SSDP_ADDR "239.255.255.250"
+#define SSDP_PORT 1900
+
+unsigned int quiet = 0;
+char ip[16];
+
+void parse_options(int argc, char *argv[])
+{
+int i = 1;
+memset(ip, 0, sizeof(ip));
+
+while (i < argc) {
+if (!strcmp(argv[i], "--quiet"))
+quiet = 1;
+else if (!strcmp(argv[i], "--ip")) {
+snprintf(ip, sizeof(ip), "%s", argv[i + 1]);
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+25
+
+March 22, 2012
+i++;
+} else
+printf("Ignoring unknown option %s\n", argv[i]);
+
+i++;
+}
+}
+
+int main(int argc, char *argv[])
+{
+int sock, ret, one = 1, len, ttl = 3;
+struct sockaddr_in cliaddr, destaddr;
+struct timeval tv;
+char buffer[MAX_BUF] = "TYPE: WM-DISCOVER\r\nVERSION: 1.0\r\n\r\nservices:
+com.marvell.wm.system*\r\n\r\n";
+char *token;
+int count = 0;
+struct ip_mreq mc_req;
+
+parse_options(argc, argv);
+
+/* Create socket */
+sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+if (sock < 0) {
+printf("%s: Cannot open socket \n", argv[0]);
+exit(1);
+}
+
+/* Allow socket resue */
+ret = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&one,
+sizeof(one));
+if (ret < 0) {
+printf("%s: Cannot prepare socket for reusing\n", argv[0]);
+exit(1);
+}
+
+/* Set receive timeout */
+tv.tv_sec = 3;
+
+/* 3 second timeout */
+
+ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv,
+sizeof(tv));
+if (ret < 0) {
+printf("%s: Cannot set receive timeout to the socket\n",
+argv[0]);
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+26
+
+March 22, 2012
+exit(1);
+}
+
+ret = setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (void *)&ttl,
+sizeof(ttl));
+if (ret < 0) {
+printf("%s: Cannot set ttl to the socket\n", argv[0]);
+exit(1);
+}
+
+/* construct a socket bind address structure */
+cliaddr.sin_family = AF_INET;
+if (strlen(ip) > 0)
+cliaddr.sin_addr.s_addr = inet_addr(ip);
+else
+cliaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+cliaddr.sin_port = htons(0);
+
+ret = bind(sock, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+if (ret < 0) {
+printf("%s: Cannot bind port\n", argv[0]);
+exit(1);
+}
+
+/* construct an IGMP join request structure */
+mc_req.imr_multiaddr.s_addr = inet_addr(SSDP_ADDR);
+mc_req.imr_interface.s_addr = htonl(INADDR_ANY);
+
+/* send an ADD MEMBERSHIP message via setsockopt */
+if ((setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+(void*) &mc_req, sizeof(mc_req))) < 0) {
+perror("setsockopt() failed");
+exit(1);
+}
+
+/* Set destination for multicast address */
+destaddr.sin_family = AF_INET;
+destaddr.sin_addr.s_addr = inet_addr(SSDP_ADDR);
+destaddr.sin_port = htons(SSDP_PORT);
+
+/* Send the multicast packet */
+len = strlen(buffer);
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+27
+
+March 22, 2012
+ret = sendto(sock, buffer, len, 0, (struct sockaddr *)&destaddr,
+sizeof(destaddr));
+if (ret < 0) {
+printf("%s: Cannot send data\n", argv[0]);
+exit(1);
+}
+
+/* quiet the noise */
+if (quiet == 0)
+printf
+("Sent the SSDP multicast request and now waiting for a
+response..\n");
+
+while (1) {
+/* Wait for response */
+len = sizeof(destaddr);
+ret =
+recvfrom(sock, buffer, MAX_BUF, 0,
+(struct sockaddr *)&destaddr, &len);
+
+if (ret == -1)
+
+/* time out */
+
+break;
+count++;
+
+/* Valid response */
+
+/* Parse the response */
+token = strtok(buffer, "\r\n");
+while (token != NULL) {
+if (!strncasecmp(token, LOCATION_HDR, strlen(LOCATION_HDR))) {
+printf("Found a wireless microcontroller, base URI: %s\n",
+token + strlen(LOCATION_HDR));
+break;
+}
+token = strtok(NULL, "\r\n");
+}
+}
+
+/* send a DROP MEMBERSHIP message via setsockopt */
+if ((setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,
+(void*) &mc_req, sizeof(mc_req))) < 0) {
+perror("setsockopt() failed");
+exit(1);
+}
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+28
+
+March 22, 2012
+if (quiet == 0)
+printf("Found %d device(s)\n", count);
+
+return 0;
+}
+
+3.4.2 Building and executing the sample program
+Use wm_demo_discover.c to discover wireless microcontrollers on a network. This utility has the capability to
+report multiple devices, if present on the network. Compile the above code using the following command:
+# gcc -o wm_demo_discover wm_demo_discover.c
+wm_demo_discover can take options:
+1. --quiet : Reports scriptable output. Without this, a verbose output is presented
+2. --ip <ip-addr>: If you laptop has multiple interfaces, you can choose which network to multicast this
+packet over using this option. The IP address that is specified should be the address of the
+interface (wired or wireless) that is connected to the same wireless access point as the thermostat
+that you are attempting to discover.
+3. --search <search str>: The service to search for.
+The thermostat devices can now be found using:
+# ./wm_demo_discover --search "com.rtcoa.tstat*" --ip 192.168.1.103
+Found a device, base URI: http://192.168.1.104/tstat
+Found a device, base URI: http://192.168.1.107/tstat
+
+Copyright @ 2012
+
+Radio Thermostat Company of America
+
+29
+
+
