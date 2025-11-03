@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { info, removeToast, error as showError } from '../utils/toast';
 
 interface ScheduleEntry {
   day: string;
@@ -19,12 +20,15 @@ const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ ipAddress, mode, refr
   const [schedule, setSchedule] = useState<ScheduleEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
         setLoading(true);
         setError(null);
+        const toastId = info('Loading schedule...');
+        setLoadingToastId(toastId);
 
         // The thermostat API returns all 7 days in one response
         // Just fetch day 0 to get all days
@@ -72,17 +76,23 @@ const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ ipAddress, mode, refr
 
         setSchedule(scheduleData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load schedule');
+        const errorMsg = err instanceof Error ? err.message : 'Failed to load schedule';
+        setError(errorMsg);
+        showError(errorMsg);
       } finally {
         setLoading(false);
+        if (loadingToastId) {
+          removeToast(loadingToastId);
+          setLoadingToastId(null);
+        }
       }
     };
 
     fetchSchedule();
-  }, [ipAddress, mode, refreshKey]);
+  }, [ipAddress, mode, refreshKey, loadingToastId]);
 
   if (loading) {
-    return <div style={{ padding: '1rem' }}>Loading schedule...</div>;
+    return null; // Loading message now shown as toast
   }
 
   return (

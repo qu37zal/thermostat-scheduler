@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { success, error as showError } from '../utils/toast';
+import { success, error as showError, info, removeToast } from '../utils/toast';
 
 interface TimeSlot {
   time: string;
@@ -47,11 +47,14 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = ({
   const [saving, setSaving] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   // Load schedule on mount
   useEffect(() => {
     const loadSchedule = async () => {
       try {
+        const toastId = info('Loading schedule...');
+        setLoadingToastId(toastId);
         setLoading(true);
         setError(null);
 
@@ -109,14 +112,20 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = ({
         setSchedule(schedules);
       } catch (err) {
         console.error('Schedule load error:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load schedule');
+        const errorMsg = err instanceof Error ? err.message : 'Failed to load schedule';
+        setError(errorMsg);
+        showError(errorMsg);
       } finally {
+        if (loadingToastId) {
+          removeToast(loadingToastId);
+          setLoadingToastId(null);
+        }
         setLoading(false);
       }
     };
 
     loadSchedule();
-  }, [ipAddress, mode]);
+  }, [ipAddress, mode, loadingToastId]);
 
   const validateTemperature = (temp: number): boolean => {
     return !isNaN(temp) && temp >= MIN_TEMP && temp <= MAX_TEMP;
@@ -276,11 +285,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = ({
   };
 
   if (loading) {
-    return (
-      <div style={{ padding: '1rem', textAlign: 'center' }}>
-        Loading schedule...
-      </div>
-    );
+    return null; // Loading shown as toast
   }
 
   if (error && schedule.length === 0) {

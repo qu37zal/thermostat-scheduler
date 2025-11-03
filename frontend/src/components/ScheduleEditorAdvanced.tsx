@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { success, error as showError } from '../utils/toast';
+import { success, error as showError, info, removeToast } from '../utils/toast';
 
 interface ScheduleEntry {
   time: string; // HH:MM format
@@ -33,11 +33,14 @@ const ScheduleEditorAdvanced: React.FC<ScheduleEditorAdvancedProps> = ({
   const [saving, setSaving] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   // Load both heat and cool schedules on mount
   useEffect(() => {
     const loadSchedules = async () => {
       try {
+        const toastId = info('Loading schedules...');
+        setLoadingToastId(toastId);
         setLoading(true);
         setError(null);
 
@@ -78,14 +81,20 @@ const ScheduleEditorAdvanced: React.FC<ScheduleEditorAdvancedProps> = ({
         setSchedules(allSchedules);
       } catch (err) {
         console.error('Schedule load error:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load schedules');
+        const errorMsg = err instanceof Error ? err.message : 'Failed to load schedules';
+        setError(errorMsg);
+        showError(errorMsg);
       } finally {
+        if (loadingToastId) {
+          removeToast(loadingToastId);
+          setLoadingToastId(null);
+        }
         setLoading(false);
       }
     };
 
     loadSchedules();
-  }, [ipAddress]);
+  }, [ipAddress, loadingToastId]);
 
   const parseScheduleArray = (arr: number[]): ScheduleEntry[] => {
     const entries: ScheduleEntry[] = [];
@@ -293,11 +302,7 @@ const ScheduleEditorAdvanced: React.FC<ScheduleEditorAdvancedProps> = ({
   };
 
   if (loading) {
-    return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
-        Loading schedules...
-      </div>
-    );
+    return null; // Loading shown as toast
   }
 
   const currentDay = schedules[selectedDay];

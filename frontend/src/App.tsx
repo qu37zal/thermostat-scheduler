@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import HelloWorld from './components/HelloWorld';
 import ThermostatList from './components/ThermostatList';
 import ThermostatSelector from './components/ThermostatSelector';
 import ToastContainer from './components/ToastContainer';
-import { success, error as showError } from './utils/toast';
+import { success, error as showError, info, removeToast } from './utils/toast';
 
 interface Thermostat {
   id: string;
@@ -27,9 +26,13 @@ const App: React.FC = () => {
   const [thermostats, setThermostats] = useState<Thermostat[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDiscovery, setShowDiscovery] = useState(true);
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   const fetchThermostats = async () => {
     try {
+      // Show loading toast - longer duration and manual dismiss
+      const toastId = info('Loading thermostats...');
+      setLoadingToastId(toastId);
       setLoading(true);
       const response = await fetch('/api/thermostats');
       if (!response.ok) throw new Error('Failed to fetch thermostats');
@@ -62,8 +65,14 @@ const App: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching thermostats:', error);
+      showError('Failed to load thermostats');
     } finally {
       setLoading(false);
+      // Dismiss loading toast
+      if (loadingToastId) {
+        removeToast(loadingToastId);
+        setLoadingToastId(null);
+      }
     }
   };
 
@@ -97,11 +106,6 @@ const App: React.FC = () => {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>⚙️ Smart Thermostat Scheduler</h1>
-      <HelloWorld />
-
-      {loading && <p>Loading thermostats...</p>}
-
       {showDiscovery ? (
         <ThermostatList />
       ) : (

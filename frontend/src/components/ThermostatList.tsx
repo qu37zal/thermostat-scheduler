@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { info, removeToast, error as showError } from '../utils/toast';
 
 interface Thermostat {
   id: string;
@@ -16,9 +17,12 @@ const ThermostatList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [manualIp, setManualIp] = useState('');
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   const fetchThermostats = async () => {
     try {
+      const toastId = info('Loading thermostats...');
+      setLoadingToastId(toastId);
       setLoading(true);
       const response = await fetch('/api/thermostats');
       if (!response.ok) {
@@ -27,9 +31,18 @@ const ThermostatList: React.FC = () => {
       const data = await response.json();
       setThermostats(data.data || []);
       setError(null);
+      if (toastId) {
+        removeToast(toastId);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch thermostats');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch thermostats';
+      setError(errorMsg);
+      showError(errorMsg);
     } finally {
+      if (loadingToastId) {
+        removeToast(loadingToastId);
+        setLoadingToastId(null);
+      }
       setLoading(false);
     }
   };
@@ -65,12 +78,7 @@ const ThermostatList: React.FC = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="thermostat-list">
-        <h2>Smart Thermostats</h2>
-        <div>Loading thermostats...</div>
-      </div>
-    );
+    return null; // Loading shown as toast
   }
 
   return (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { info, removeToast, error as showError } from '../utils/toast';
 import TemperatureTrendChart from './charts/TemperatureTrendChart';
 import RuntimeHistogram from './charts/RuntimeHistogram';
 import HistoryTable from './charts/HistoryTable';
@@ -26,10 +27,13 @@ const HistoryVisualization: React.FC<HistoryVisualizationProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'chart' | 'table'>('chart');
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
+        const toastId = info('Loading history...');
+        setLoadingToastId(toastId);
         setLoading(true);
         setError(null);
 
@@ -61,17 +65,23 @@ const HistoryVisualization: React.FC<HistoryVisualizationProps> = ({
 
         setHistory(processedData as HistoryEntry[]);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch history');
+        const errorMsg = err instanceof Error ? err.message : 'Failed to fetch history';
+        setError(errorMsg);
+        showError(errorMsg);
       } finally {
+        if (loadingToastId) {
+          removeToast(loadingToastId);
+          setLoadingToastId(null);
+        }
         setLoading(false);
       }
     };
 
     fetchHistory();
-  }, [ipAddress, hoursBack]);
+  }, [ipAddress, hoursBack, loadingToastId]);
 
   if (loading) {
-    return <div style={{ padding: '1rem' }}>Loading history...</div>;
+    return null; // Loading shown as toast
   }
 
   if (error) {

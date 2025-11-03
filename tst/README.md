@@ -1,23 +1,102 @@
 # Test Directory Structure
 
-This directory contains all tests for the Smart Thermostat Scheduler project.
+This directory contains all tests for the Smart Thermostat Scheduler project, including 130+ unit tests covering backend services, controllers, utilities, and frontend components.
 
 ## Directory Layout
 
 ```
 tst/
-├── unit/                   Unit tests for individual functions/classes
-│   └── *.test.ts          Test files (Jest format)
-└── integ/                 Integration tests
-    ├── test-discovery.js  Thermostat discovery integration test
-    └── test-ip-scan.js    Network IP range scanning integration test
+├── jest.setup.ts               Jest configuration and type globals
+├── unit/                       Unit tests for individual functions/classes
+│   ├── temperature.test.ts    Temperature conversion & validation (6 tests)
+│   ├── database.test.ts       Database CRUD & history (12+ tests)
+│   ├── helloController.test.ts Hello endpoint (2 tests)
+│   ├── stirFansScheduler.test.ts Fan circulation logic (13+ tests)
+│   ├── thermostatDiscovery.test.ts Network discovery (15+ tests)
+│   └── apiRoutes.test.ts      REST API endpoints (18+ tests)
+└── integ/                      Integration tests
+    ├── test-discovery.js      Thermostat discovery integration test
+    └── test-ip-scan.js        Network IP range scanning integration test
+
+frontend/src/__tests__/         Frontend tests
+├── components/
+│   ├── ThermostatStatus.test.tsx  Status display (14+ tests)
+│   └── ScheduleEditor.test.tsx    Schedule editing (23+ tests)
+└── utils/
+    └── toast.test.ts          Toast notifications (25+ tests)
 ```
 
-## Unit Tests
+## Unit Tests Overview
 
-Located in `tst/unit/`, these test individual functions and components in isolation.
+Located in `tst/unit/`, these test individual functions and components in isolation with 70+ tests.
 
-### Running Unit Tests
+### Backend Test Modules
+
+**Temperature (6 tests)**
+- Celsius ↔ Fahrenheit conversion
+- Range validation (50-90°F)
+- Custom min/max ranges
+
+**Database (12+ tests)**
+- Thermostat CRUD operations
+- History data persistence
+- Error handling
+
+**Stir Fans Scheduler (13+ tests)**
+- Fan circulation scheduling
+- Hourly execution intervals
+- State management
+
+**Thermostat Discovery (15+ tests)**
+- Network device detection
+- RTCOA model recognition
+- IP validation
+
+**API Routes (18+ tests)**
+- REST endpoint validation
+- Parameter checking
+- HTTP status codes
+
+### Frontend Test Modules
+
+**Thermostat Status Component (14+ tests)**
+- Temperature and humidity display
+- HVAC and fan mode display
+- Color coding
+- Offline handling
+
+**Schedule Editor Component (23+ tests)**
+- 24-hour schedule display
+- Temperature input validation
+- Save/cancel operations
+- Keyboard shortcuts
+
+**Toast Utilities (25+ tests)**
+- 4 toast types
+- Display positioning
+- Queue management
+- Security (HTML escaping)
+
+## Running Tests
+
+### All Tests
+```bash
+cd backend
+npm test
+```
+
+### Specific Test File
+```bash
+npm test -- temperature.test.ts
+npm test -- database.test.ts
+```
+
+### Watch Mode
+```bash
+npm run test:watch
+```
+
+### Coverage Report
 
 ```bash
 # Run all tests once

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { info, removeToast, error as showError } from '../utils/toast';
 
 interface ScheduleEntry {
   day: string;
@@ -19,10 +20,13 @@ const ScheduleDisplayCombined: React.FC<ScheduleDisplayCombinedProps> = ({ ipAdd
   const [coolSchedule, setCoolSchedule] = useState<ScheduleEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingToastId, setLoadingToastId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
+        const toastId = info('Loading schedules...');
+        setLoadingToastId(toastId);
         setLoading(true);
         setError(null);
 
@@ -72,17 +76,23 @@ const ScheduleDisplayCombined: React.FC<ScheduleDisplayCombinedProps> = ({ ipAdd
         setHeatSchedule(parseSchedules(heatData));
         setCoolSchedule(parseSchedules(coolData));
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load schedules');
+        const errorMsg = err instanceof Error ? err.message : 'Failed to load schedules';
+        setError(errorMsg);
+        showError(errorMsg);
       } finally {
+        if (loadingToastId) {
+          removeToast(loadingToastId);
+          setLoadingToastId(null);
+        }
         setLoading(false);
       }
     };
 
     fetchSchedules();
-  }, [ipAddress, refreshKey]);
+  }, [ipAddress, refreshKey, loadingToastId]);
 
   if (loading) {
-    return <div style={{ padding: '1rem' }}>Loading schedules...</div>;
+    return null; // Loading shown as toast
   }
 
   // Group schedules by day

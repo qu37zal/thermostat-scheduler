@@ -4,6 +4,7 @@ This directory contains all development documentation, API specifications, and p
 
 ## Quick Reference
 
+- **Testing Guide**: `TESTING_GUIDE.md` - Unit test coverage and testing procedures
 - **Supported Hardware**: `SUPPORTED_HARDWARE.md` - Thermostat models and hardware requirements
 - **API Specification**: `RTCOAWiFIAPIV1_3.txt` - Official thermostat API documentation
 - **Architecture**: `COMPONENT_ARCHITECTURE.md` - Component design and data flow
@@ -11,6 +12,9 @@ This directory contains all development documentation, API specifications, and p
 - **Recent Updates**: `SESSION_3_SUMMARY.md` - Latest development session summary
 
 ## Documentation Files
+
+### Testing & Quality Assurance
+- **TESTING_GUIDE.md** - Comprehensive unit test coverage (130+ tests), test execution, and procedures
 
 ### Project Overview
 - **SUPPORTED_HARDWARE.md** - Compatible thermostat models (CT50, CT80, etc.) and hardware requirements
