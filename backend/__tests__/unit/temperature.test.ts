@@ -1,4 +1,4 @@
-import { celsiusToFahrenheit, fahrenheitToCelsius, validateTemperature } from '../src/utils/temperature';
+import { celsiusToFahrenheit, fahrenheitToCelsius, validateTemperature } from '../../src/utils/temperature';
 
 describe('Temperature Utility Functions', () => {
   describe('celsiusToFahrenheit', () => {

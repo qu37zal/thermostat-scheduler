@@ -57,7 +57,7 @@ describe('Thermostat Discovery', () => {
     });
 
     it('should skip non-RTCOA devices', () => {
-      const deviceType = 'other';
+      const deviceType: string = 'other';
       const isRTCOA = deviceType === 'RTCOA';
       expect(isRTCOA).toBe(false);
     });

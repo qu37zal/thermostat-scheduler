@@ -1,4 +1,4 @@
-import { HelloController } from '../../backend/src/controllers/helloController';
+import { HelloController } from '../../src/controllers/helloController';
 
 describe('HelloController', () => {
   let controller: HelloController;

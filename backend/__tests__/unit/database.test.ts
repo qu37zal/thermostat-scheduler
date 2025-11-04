@@ -22,31 +22,35 @@ describe('Database Service', () => {
 
   describe('Thermostat Management', () => {
     const testThermostat = {
-      ip: '192.168.1.100',
+      ip_address: '192.168.1.100',
       name: 'Living Room',
       model: 'CT50',
     };
 
     it('should save a thermostat', async () => {
-      const result = await saveKnownThermostat(testThermostat.ip, testThermostat.name, testThermostat.model);
-      expect(result).toBeDefined();
+      const result = await saveKnownThermostat(testThermostat.ip_address, testThermostat.name, testThermostat.model);
+      expect(result).toBeUndefined(); // This function doesn't return anything
     });
 
     it('should retrieve saved thermostat', async () => {
       const thermostats = await getKnownThermostats();
-      expect(thermostats).toContainEqual(expect.objectContaining(testThermostat));
+      expect(thermostats.length).toBeGreaterThan(0);
+      const found = thermostats.find((t: any) => t.ip_address === testThermostat.ip_address);
+      expect(found).toBeDefined();
+      expect(found?.name).toBe(testThermostat.name);
+      expect(found?.model).toBe(testThermostat.model);
     });
 
     it('should update thermostat name', async () => {
       const updatedName = 'Main Living Room';
-      await saveKnownThermostat(testThermostat.ip, updatedName, testThermostat.model);
+      await saveKnownThermostat(testThermostat.ip_address, updatedName, testThermostat.model);
       const thermostats = await getKnownThermostats();
-      const updated = thermostats.find((t: any) => t.ip === testThermostat.ip);
+      const updated = thermostats.find((t: any) => t.ip_address === testThermostat.ip_address);
       expect(updated?.name).toBe(updatedName);
     });
 
     it('should delete a thermostat', async () => {
-      await deleteKnownThermostat(testThermostat.ip);
+      await deleteKnownThermostat(testThermostat.ip_address);
       const thermostats = await getKnownThermostats();
       expect(thermostats).not.toContainEqual(expect.objectContaining(testThermostat));
     });
@@ -61,11 +65,10 @@ describe('Database Service', () => {
     const thermostatIp = '192.168.1.101';
     const testHistory = {
       temperature: 72,
-      humidity: 45,
-      hvac_mode: 1,
-      fan_mode: 0,
-      runtime_heat: 120,
-      runtime_cool: 0,
+      setpoint: 70,
+      mode: 'heat',
+      fanMode: 'auto',
+      runtimeMinutes: 120,
     };
 
     beforeAll(async () => {
@@ -75,7 +78,7 @@ describe('Database Service', () => {
 
     it('should save thermostat history', async () => {
       const result = await saveThermostatHistory(thermostatIp, testHistory);
-      expect(result).toBeDefined();
+      expect(result).toBeUndefined(); // Function doesn't return anything
     });
 
     it('should retrieve history for thermostat', async () => {
